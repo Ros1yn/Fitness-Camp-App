@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${participant.id != null} ? 'Edytuj uczestnika - FitCamp Admin' : 'Dodaj uczestnika - FitCamp Admin'">Formularz uczestnika - FitCamp Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav th:replace="~{fragments/layout :: navbar}"></nav>
+        
+        <main class="main-content">
+            <div class="container" style="max-width: 600px;">
+                <div class="page-header">
+                    <div>
+                        <h1 th:text="${participant.id != null} ? 'Edytuj uczestnika' : 'Dodaj nowego uczestnika'">Formularz uczestnika</h1>
+                        <p class="text-muted mt-1" th:text="${participant.id != null} ? 'Zaktualizuj dane uczestnika' : 'Recznie zarejestruj uczestnika na oboz'">Podtytul</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/admin/participants/save}" th:object="${participant}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:if="${participant.registrationDate}" th:field="*{registrationDate}">
+                            
+                            <div class="form-group">
+                                <label for="firstName" class="form-label">Imie *</label>
+                                <input type="text" id="firstName" th:field="*{firstName}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid' : ''"
+                                       placeholder="Wprowadz imie" required>
+                                <div th:if="${#fields.hasErrors('firstName')}" class="invalid-feedback" th:errors="*{firstName}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="lastName" class="form-label">Nazwisko *</label>
+                                <input type="text" id="lastName" th:field="*{lastName}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid' : ''"
+                                       placeholder="Wprowadz nazwisko" required>
+                                <div th:if="${#fields.hasErrors('lastName')}" class="invalid-feedback" th:errors="*{lastName}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Adres email *</label>
+                                <input type="email" id="email" th:field="*{email}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                                       placeholder="email@przyklad.pl" required>
+                                <div th:if="${#fields.hasErrors('email')}" class="invalid-feedback" th:errors="*{email}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Numer telefonu *</label>
+                                <input type="tel" id="phone" th:field="*{phone}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                                       placeholder="+48-123-456-789" required>
+                                <div th:if="${#fields.hasErrors('phone')}" class="invalid-feedback" th:errors="*{phone}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="camp" class="form-label">Oboz *</label>
+                                <select id="camp" th:field="*{camp.id}" 
+                                        class="form-control" th:classappend="${#fields.hasErrors('camp')} ? 'is-invalid' : ''"
+                                        required>
+                                    <option value="">-- Wybierz oboz --</option>
+                                    <option th:each="c : ${camps}" 
+                                            th:value="${c.id}" 
+                                            th:text="${c.name} + ' (' + ${#temporals.format(c.startDate, 'd MMM')} + ' - ' + ${#temporals.format(c.endDate, 'd MMM')} + ')'">
+                                        Nazwa obozu
+                                    </option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('camp')}" class="invalid-feedback" th:errors="*{camp}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="registrationStatus" class="form-label">Status rejestracji *</label>
+                                <select id="registrationStatus" th:field="*{registrationStatus}" class="form-control" required>
+                                    <option th:each="status : ${statuses}" 
+                                            th:value="${status}" 
+                                            th:text="${status.displayName}">
+                                        Status
+                                    </option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="notes" class="form-label">Notatki (opcjonalnie)</label>
+                                <textarea id="notes" th:field="*{notes}" class="form-control" rows="3"
+                                          placeholder="Dodatkowe notatki o tym uczestniku..."></textarea>
+                            </div>
+                            
+                            <div class="flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <polyline points="17 21 17 13 7 13 7 21"/>
+                                        <polyline points="7 3 7 8 15 8"/>
+                                    </svg>
+                                    <span th:text="${participant.id != null} ? 'Zaktualizuj uczestnika' : 'Dodaj uczestnika'">Zapisz</span>
+                                </button>
+                                <a href="/admin/participants" class="btn btn-outline">Anuluj</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer th:replace="~{fragments/layout :: footer}"></footer>
+    </div>
+</body>
+</html>

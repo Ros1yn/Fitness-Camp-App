@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${camp.name} + ' Uczestnicy - FitCamp Admin'">Uczestnicy obozu - FitCamp Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav th:replace="~{fragments/layout :: navbar}"></nav>
+        
+        <main class="main-content">
+            <div class="container">
+                <a href="/admin/camps" class="btn btn-outline mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"/>
+                        <polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    Powrot do obozow
+                </a>
+                
+                <div class="page-header">
+                    <div>
+                        <h1 th:text="${camp.name}">Nazwa obozu</h1>
+                        <p class="text-muted mt-1">
+                            <span th:text="${camp.location}">Lokalizacja</span> |
+                            <span th:text="${#temporals.format(camp.startDate, 'd MMM')} + ' - ' + ${#temporals.format(camp.endDate, 'd MMM yyyy')}">1 - 7 sty 2026</span>
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="badge badge-active" th:text="${#lists.size(participants)} + ' / ' + ${camp.capacity} + ' zapisanych'">0 / 25 zapisanych</span>
+                    </div>
+                </div>
+                
+                <div th:if="${successMessage}" class="alert alert-success">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span th:text="${successMessage}">Komunikat sukcesu</span>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header flex items-center justify-between">
+                        <h4>Uczestnicy</h4>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Imie i nazwisko</th>
+                                    <th>Email</th>
+                                    <th>Telefon</th>
+                                    <th>Status</th>
+                                    <th>Data rejestracji</th>
+                                    <th>Akcje</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:if="${#lists.isEmpty(participants)}">
+                                    <td colspan="6" class="text-center text-muted" style="padding: 2rem;">
+                                        Brak zapisanych uczestnikow na ten oboz.
+                                    </td>
+                                </tr>
+                                <tr th:each="participant : ${participants}">
+                                    <td>
+                                        <strong th:text="${participant.fullName}">Jan Kowalski</strong>
+                                    </td>
+                                    <td>
+                                        <a th:href="'mailto:' + ${participant.email}" th:text="${participant.email}">jan@przyklad.pl</a>
+                                    </td>
+                                    <td th:text="${participant.phone}">+48-123-456-789</td>
+                                    <td>
+                                        <span class="badge" 
+                                              th:classappend="${participant.registrationStatus.name() == 'PENDING'} ? 'badge-pending' : (${participant.registrationStatus.name() == 'CONFIRMED'} ? 'badge-confirmed' : (${participant.registrationStatus.name() == 'CANCELLED'} ? 'badge-cancelled' : 'badge-waitlisted'))"
+                                              th:text="${participant.registrationStatus.displayName}">
+                                            Oczekujacy
+                                        </span>
+                                    </td>
+                                    <td th:text="${#temporals.format(participant.registrationDate, 'd MMM yyyy')}">1 sty 2026</td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a th:href="@{/admin/participants/edit/{id}(id=${participant.id})}" class="btn btn-outline btn-sm" title="Edytuj">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                                </svg>
+                                            </a>
+                                            <form th:if="${participant.registrationStatus.name() == 'PENDING'}" 
+                                                  th:action="@{/admin/participants/{id}/status(id=${participant.id})}" method="post" style="display: inline;">
+                                                <input type="hidden" name="status" value="CONFIRMED">
+                                                <button type="submit" class="btn btn-success btn-sm" title="Potwierdz">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="20 6 9 17 4 12"/>
+                                                    </svg>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer th:replace="~{fragments/layout :: footer}"></footer>
+    </div>
+</body>
+</html>

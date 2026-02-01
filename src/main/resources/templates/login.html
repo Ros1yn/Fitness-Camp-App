@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logowanie - FitCamp Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card card">
+            <div class="card-body">
+                <div class="login-header">
+                    <a href="/" class="navbar-brand" style="justify-content: center;">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 2.5rem; height: 2.5rem; color: var(--color-primary);">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                            <line x1="6" y1="1" x2="6" y2="4"/>
+                            <line x1="10" y1="1" x2="10" y2="4"/>
+                            <line x1="14" y1="1" x2="14" y2="4"/>
+                        </svg>
+                    </a>
+                    <h1>Logowanie Admin</h1>
+                    <p>Zaloguj sie, aby uzyskac dostep do panelu administracyjnego</p>
+                </div>
+                
+                <div th:if="${param.error}" class="alert alert-danger">
+                    Nieprawidlowa nazwa uzytkownika lub haslo. Sprobuj ponownie.
+                </div>
+                
+                <div th:if="${param.logout}" class="alert alert-success">
+                    Zostales pomyslnie wylogowany.
+                </div>
+                
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <label for="username" class="form-label">Nazwa uzytkownika</label>
+                        <input type="text" id="username" name="username" class="form-control" 
+                               placeholder="Wprowadz nazwe uzytkownika" required autofocus>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Haslo</label>
+                        <input type="password" id="password" name="password" class="form-control" 
+                               placeholder="Wprowadz haslo" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Zaloguj sie</button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <p class="text-muted" style="font-size: 0.875rem;">
+                        Dane demo: <strong>admin</strong> / <strong>admin123</strong>
+                    </p>
+                </div>
+                
+                <div class="mt-3 text-center">
+                    <a href="/" class="text-muted" style="font-size: 0.875rem;">Powrot do strony glownej</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

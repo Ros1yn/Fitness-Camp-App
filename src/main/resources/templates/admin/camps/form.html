@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${camp.id != null} ? 'Edytuj oboz - FitCamp Admin' : 'Utworz oboz - FitCamp Admin'">Formularz obozu - FitCamp Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="page-wrapper">
+        <nav th:replace="~{fragments/layout :: navbar}"></nav>
+        
+        <main class="main-content">
+            <div class="container" style="max-width: 700px;">
+                <div class="page-header">
+                    <div>
+                        <h1 th:text="${camp.id != null} ? 'Edytuj oboz' : 'Utworz nowy oboz'">Formularz obozu</h1>
+                        <p class="text-muted mt-1" th:text="${camp.id != null} ? 'Zaktualizuj szczegoly obozu' : 'Wypelnij szczegoly, aby utworzyc nowy oboz fitness'">Podtytul</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-body">
+                        <form th:action="@{/admin/camps/save}" th:object="${camp}" method="post">
+                            <input type="hidden" th:field="*{id}">
+                            
+                            <div class="form-group">
+                                <label for="name" class="form-label">Nazwa obozu *</label>
+                                <input type="text" id="name" th:field="*{name}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                                       placeholder="np. Letni oboz HIIT" required>
+                                <div th:if="${#fields.hasErrors('name')}" class="invalid-feedback" th:errors="*{name}">Blad</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="description" class="form-label">Opis</label>
+                                <textarea id="description" th:field="*{description}" class="form-control" rows="4"
+                                          placeholder="Opisz, czego uczestnicy moga oczekiwac od tego obozu..."></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="location" class="form-label">Lokalizacja *</label>
+                                <input type="text" id="location" th:field="*{location}" 
+                                       class="form-control" th:classappend="${#fields.hasErrors('location')} ? 'is-invalid' : ''"
+                                       placeholder="np. Park Centralny, Warszawa" required>
+                                <div th:if="${#fields.hasErrors('location')}" class="invalid-feedback" th:errors="*{location}">Blad</div>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="startDate" class="form-label">Data rozpoczecia *</label>
+                                    <input type="date" id="startDate" th:field="*{startDate}" 
+                                           class="form-control" th:classappend="${#fields.hasErrors('startDate')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div th:if="${#fields.hasErrors('startDate')}" class="invalid-feedback" th:errors="*{startDate}">Blad</div>
+                                </div>
+                                
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="endDate" class="form-label">Data zakonczenia *</label>
+                                    <input type="date" id="endDate" th:field="*{endDate}" 
+                                           class="form-control" th:classappend="${#fields.hasErrors('endDate')} ? 'is-invalid' : ''"
+                                           required>
+                                    <div th:if="${#fields.hasErrors('endDate')}" class="invalid-feedback" th:errors="*{endDate}">Blad</div>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="capacity" class="form-label">Pojemnosc *</label>
+                                    <input type="number" id="capacity" th:field="*{capacity}" 
+                                           class="form-control" th:classappend="${#fields.hasErrors('capacity')} ? 'is-invalid' : ''"
+                                           placeholder="25" min="1" required>
+                                    <div th:if="${#fields.hasErrors('capacity')}" class="invalid-feedback" th:errors="*{capacity}">Blad</div>
+                                    <p class="form-text">Maksymalna liczba uczestnikow</p>
+                                </div>
+                                
+                                <div class="form-group" style="flex: 1;">
+                                    <label for="price" class="form-label">Cena (zl) *</label>
+                                    <input type="number" id="price" th:field="*{price}" 
+                                           class="form-control" th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''"
+                                           placeholder="299.99" min="0" step="0.01" required>
+                                    <div th:if="${#fields.hasErrors('price')}" class="invalid-feedback" th:errors="*{price}">Blad</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label flex items-center gap-2" style="cursor: pointer;">
+                                    <input type="checkbox" th:field="*{isActive}" style="width: 18px; height: 18px;">
+                                    <span>Aktywny</span>
+                                </label>
+                                <p class="form-text">Tylko aktywne obozy sa widoczne dla uczestnikow do rejestracji</p>
+                            </div>
+                            
+                            <div class="flex gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary" style="flex: 1;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                        <polyline points="17 21 17 13 7 13 7 21"/>
+                                        <polyline points="7 3 7 8 15 8"/>
+                                    </svg>
+                                    <span th:text="${camp.id != null} ? 'Zaktualizuj oboz' : 'Utworz oboz'">Zapisz oboz</span>
+                                </button>
+                                <a href="/admin/camps" class="btn btn-outline">Anuluj</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <footer th:replace="~{fragments/layout :: footer}"></footer>
+    </div>
+</body>
+</html>
