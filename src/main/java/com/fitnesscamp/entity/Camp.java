@@ -52,9 +52,11 @@ public class Camp {
     private Double price;
 
     @Column(name = "is_active")
+    @Builder.Default
     private Boolean isActive = true;
 
     @OneToMany(mappedBy = "camp", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Participant> participants = new ArrayList<>();
 
     public int getAvailableSpots() {

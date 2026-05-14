@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+bootRun {
+    jvmArgs(['--enable-native-access=ALL-UNNAMED'])
+}
+
 repositories {
     mavenCentral()
 }

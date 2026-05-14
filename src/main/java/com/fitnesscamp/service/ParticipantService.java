@@ -31,7 +31,7 @@ public class ParticipantService {
     }
 
     public List<Participant> getParticipantsByStatus(RegistrationStatus status) {
-        return participantRepository.findByRegistrationStatus(status);
+        return participantRepository.findByRegistrationStatus(status);  
     }
 
     public Participant saveParticipant(Participant participant) {

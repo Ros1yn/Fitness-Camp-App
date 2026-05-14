@@ -49,14 +49,16 @@ public class Participant {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "registration_status", nullable = false)
+    @Builder.Default
     private RegistrationStatus registrationStatus = RegistrationStatus.PENDING;
 
     @Column(name = "registration_date", nullable = false)
+    @Builder.Default
     private LocalDateTime registrationDate = LocalDateTime.now();
 
     @Column(columnDefinition = "TEXT")
     private String notes;
-
+    
     public String getFullName() {
         return firstName + " " + lastName;
     }

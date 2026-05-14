@@ -33,9 +33,11 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    @Builder.Default
     private Role role = Role.ADMIN;
 
     @Column(nullable = false)
+    @Builder.Default
     private Boolean enabled = true;
 
     public enum Role {
