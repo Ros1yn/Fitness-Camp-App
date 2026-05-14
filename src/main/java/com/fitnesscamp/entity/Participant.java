@@ -58,7 +58,7 @@ public class Participant {
 
     @Column(columnDefinition = "TEXT")
     private String notes;
-    
+
     public String getFullName() {
         return firstName + " " + lastName;
     }
